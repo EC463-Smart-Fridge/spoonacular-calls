@@ -72,29 +72,20 @@ def getRecipeByIngredients(API_KEY, parameterList): # parameterList should be a 
     url = urlPrser(1, API_KEY, parameterList)
     url = url + "&number=" + str(NUMTORETURN)
     url = url + "&ranking=" + str(RANKING)
-
-    # save JSON return from server
-    directory = "jsonData"
-    filename = "RecipeByIngredients.json"
-    filepath = os.path.join(directory, filename)
-    saveJsonFromGET(url, filepath)
     
-    with open(filepath, 'r') as recipes:
-        # Parse the JSON data
-        recipesData = json.load(recipes)
 
-        # Create a list to store tuples of recipe ID and name
-        recipeResults = []
+    # Create a list to store tuples of recipe ID and name
+    recipesData = getJsonFromGET(url)
+    recipeResults = []
 
-        # Iterate over each recipe
-        for recipe in recipesData:
-            # Extract recipe ID and name
-            recipeID = recipe['id']
-            recipeNAME = recipe['title']
-            # Append tuple to list
-            recipeResults.append((recipeID, recipeNAME))
+    # Iterate over each recipe
+    for recipe in recipesData:
+        # Extract recipe ID and name
+        recipeID = recipe['id']
+        recipeNAME = recipe['title']
+        # Append tuple to list
+        recipeResults.append((recipeID, recipeNAME))
 
-    os.remove(filepath) # cleanup
     return recipeResults # returns a tuple with the recipe ID and name
     ''' For example:
     [(673463, 'Slow Cooker Apple Pork Tenderloin'), (633547, 'Baked Cinnamon Apple Slices'), (663748, 'Traditional Apple Tart'), (715381, 'Creamy Lime Pie Square Bites'), (639637, 'Classic scones'), (635315, 'Blood Orange Margarita'), (1155776, 'Easy Homemade Chocolate Truffles'), (652952, 'Napoleon - A Creamy Puff Pastry Cake'), (664089, 'Turkish Delight'), (635778, 'Boysenberry Syrup')]
@@ -108,26 +99,20 @@ def getRecipeInstructions(API_KEY, recipeID):
     url = urlPrser(2, API_KEY, recipeID)
     url = url + booleanParameters
 
-    directory = "jsonData"
-    filename = "RecipeInstructions" + str(recipeID) + ".json"
-    filepath = os.path.join(directory, filename)
-    saveJsonFromGET(url, filepath)
-
     # Load JSON data
-    with open(filepath, 'r') as recipeInfo:
-        recipeData = json.load(recipeInfo)
+    recipeData = getJsonFromGET(url)
 
-        # Extract steps and ingredient names
-        steps = []
-        ingredientNames = set()
+    # Extract steps and ingredient names
+    steps = []
+    ingredientNames = set()
 
-        for recipe in recipeData:
-            for step in recipe['steps']:
-                steps.append(step['step'])
-                for ingredient in step['ingredients']:
-                    ingredientNames.add(ingredient['name'])
+    for recipe in recipeData:
+        for step in recipe['steps']:
+            steps.append(step['step'])
+            for ingredient in step['ingredients']:
+                ingredientNames.add(ingredient['name'])
 
-    os.remove(filepath) # cleanup
+    print(steps, ingredientNames)
     return steps, ingredientNames # returns two lists, one with the recipe steps and one with the recipe ingredients
 
 def parseIngredient(API_KEY, ingredient): # ingredient is the ingredient that needs parsing
@@ -162,8 +147,6 @@ if __name__ == "__main__": # Main with example usage
 
     recipeID = 635315
     getRecipeInstructions(API_KEY, recipeID)
-
-    # Test parsing these JSONs
     
     '''
     json_data = getJsonFromGET(url)
