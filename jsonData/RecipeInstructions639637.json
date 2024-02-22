@@ -1,0 +1,113 @@
+[
+    {
+        "name": "",
+        "steps": [
+            {
+                "number": 1,
+                "step": "Using fingertips, rub butter into flour until mixture resembles fine breadcrumbs.Make a well in the centre of the dry ingredients and add milk, stirring with a metal spatula or butter knife until mixture comes away from the sides of the bowl. If mixture is dry, add a little extra milk.Turn mixture onto a lightly floured bench and bring the dough together until a rough ball of dough is formed. Do not over-knead. Pat dough to 2 cm thickness. With a clean knife, quarter the dough or use a round cutter to cut rounds.Arrange scones onto a baking paper lined tray and bake at 220C for 12-15 minutes until golden and they sound hollow when lightly tapped on the base.Serve scones straight from the oven with jam and cream.",
+                "ingredients": [
+                    {
+                        "id": 0,
+                        "name": "fine breadcrumbs",
+                        "localizedName": "fine breadcrumbs",
+                        "image": "breadcrumbs.jpg"
+                    },
+                    {
+                        "id": 1001,
+                        "name": "butter",
+                        "localizedName": "butter",
+                        "image": "butter-sliced.jpg"
+                    },
+                    {
+                        "id": 1053,
+                        "name": "cream",
+                        "localizedName": "cream",
+                        "image": "fluid-cream.jpg"
+                    },
+                    {
+                        "id": 0,
+                        "name": "dough",
+                        "localizedName": "dough",
+                        "image": "pizza-dough"
+                    },
+                    {
+                        "id": 20081,
+                        "name": "all purpose flour",
+                        "localizedName": "all purpose flour",
+                        "image": "flour.png"
+                    },
+                    {
+                        "id": 0,
+                        "name": "base",
+                        "localizedName": "base",
+                        "image": ""
+                    },
+                    {
+                        "id": 1077,
+                        "name": "milk",
+                        "localizedName": "milk",
+                        "image": "milk.png"
+                    },
+                    {
+                        "id": 19297,
+                        "name": "jam",
+                        "localizedName": "jam",
+                        "image": "strawberry-jam.png"
+                    },
+                    {
+                        "id": 1012034,
+                        "name": "dry seasoning rub",
+                        "localizedName": "dry seasoning rub",
+                        "image": "seasoning.png"
+                    }
+                ],
+                "equipment": [
+                    {
+                        "id": 404770,
+                        "name": "baking paper",
+                        "localizedName": "baking paper",
+                        "image": "baking-paper.jpg"
+                    },
+                    {
+                        "id": 404725,
+                        "name": "butter knife",
+                        "localizedName": "butter knife",
+                        "image": "chefs-knife.jpg"
+                    },
+                    {
+                        "id": 404784,
+                        "name": "oven",
+                        "localizedName": "oven",
+                        "image": "oven.jpg",
+                        "temperature": {
+                            "number": 220.0,
+                            "unit": "Celsius"
+                        }
+                    },
+                    {
+                        "id": 404642,
+                        "name": "spatula",
+                        "localizedName": "spatula",
+                        "image": "spatula-or-turner.jpg"
+                    },
+                    {
+                        "id": 404745,
+                        "name": "knife",
+                        "localizedName": "knife",
+                        "image": "chefs-knife.jpg"
+                    },
+                    {
+                        "id": 404783,
+                        "name": "bowl",
+                        "localizedName": "bowl",
+                        "image": "bowl.jpg"
+                    }
+                ],
+                "length": {
+                    "number": 15,
+                    "unit": "minutes"
+                }
+            }
+        ]
+    }
+]

@@ -1,7 +1,8 @@
 import requests
 import json
+import os
 
-def get_json_from_page(url):
+def getJsonFromGET(url): # Returns the JSON information in the dict format
     try:
         # Make a GET request to the URL
         response = requests.get(url)
@@ -9,10 +10,10 @@ def get_json_from_page(url):
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
             # Parse the JSON data from the response
-            json_data = response.json()
+            jsonData = response.json()
 
             # Return the parsed JSON data
-            return json_data
+            return jsonData
         else:
             # If the request was not successful, print an error message
             print(f"Error: {response.status_code}")
@@ -23,13 +24,29 @@ def get_json_from_page(url):
         print(f"An error occurred: {e}")
         return None
     
-def boolean_variables_to_string(boolean_variables):
+def saveJsonFromGET(url, filepath): # Saves the JSON information to file in /jsonData
+    try:
+        # Send a GET request and obtain JSON data
+        response = requests.get(url)
+        if response.status_code == 200:
+            json_data = response.json()  # Parse JSON data
+            # Save the JSON data to a file
+            with open(filepath, 'w') as file:
+                json.dump(json_data, file, indent=4)
+            print(f"JSON data saved to {filepath} successfully.")
+        else:
+            print(f"Failed to retrieve data. Status code: {response.status_code}")
+
+    except Exception as e:
+        # Handle exceptions, if any
+        print(f"An error occurred: {e}")
+        return None
+    
+def booleanVariablesToString(boolean_variables):
     formatted_string = ""
     for variable, value in boolean_variables.items():
         formatted_string += f"&{variable}={'true' if value else 'false'}"
     return formatted_string
-
-
     
 def urlPrser(request, API_KEY, parameterList):
     # This function contructs the URL needed to make the desired call
@@ -56,18 +73,70 @@ def getRecipeByIngredients(API_KEY, parameterList): # parameterList should be a 
     url = url + "&number=" + str(NUMTORETURN)
     url = url + "&ranking=" + str(RANKING)
 
-    # write results parser below
-    print(url)
+    # save JSON return from server
+    directory = "jsonData"
+    filename = "RecipeByIngredients.json"
+    filepath = os.path.join(directory, filename)
+    saveJsonFromGET(url, filepath)
+    
+    with open(filepath, 'r') as recipes:
+        # Parse the JSON data
+        recipesData = json.load(recipes)
 
+        # Create a list to store tuples of recipe ID and name
+        recipeResults = []
+
+        # Iterate over each recipe
+        for recipe in recipesData:
+            # Extract recipe ID and name
+            recipeID = recipe['id']
+            recipeNAME = recipe['title']
+            # Append tuple to list
+            recipeResults.append((recipeID, recipeNAME))
+
+    os.remove(filepath) # cleanup
+    return recipeResults # returns a tuple with the recipe ID and name
+    ''' For example:
+    [(673463, 'Slow Cooker Apple Pork Tenderloin'), (633547, 'Baked Cinnamon Apple Slices'), (663748, 'Traditional Apple Tart'), (715381, 'Creamy Lime Pie Square Bites'), (639637, 'Classic scones'), (635315, 'Blood Orange Margarita'), (1155776, 'Easy Homemade Chocolate Truffles'), (652952, 'Napoleon - A Creamy Puff Pastry Cake'), (664089, 'Turkish Delight'), (635778, 'Boysenberry Syrup')]
+    '''
+    
+        
 def getRecipeInstructions(API_KEY, recipeID):
     booleanParameters = {"stepBreakdown": False}
-    booleanParameters = boolean_variables_to_string(booleanParameters)
+    booleanParameters = booleanVariablesToString(booleanParameters)
 
     url = urlPrser(2, API_KEY, recipeID)
     url = url + booleanParameters
 
-    # write results parser below
-    print(url)
+    directory = "jsonData"
+    filename = "RecipeInstructions" + str(recipeID) + ".json"
+    filepath = os.path.join(directory, filename)
+    saveJsonFromGET(url, filepath)
+
+    # Load JSON data
+    with open(filepath, 'r') as recipeInfo:
+        recipeData = json.load(recipeInfo)
+
+        # Extract steps and ingredient names
+        steps = []
+        ingredientNames = set()
+
+        for recipe in recipeData:
+            for step in recipe['steps']:
+                steps.append(step['step'])
+                for ingredient in step['ingredients']:
+                    ingredientNames.add(ingredient['name'])
+
+    os.remove(filepath) # cleanup
+    return steps, ingredientNames # returns two lists, one with the recipe steps and one with the recipe ingredients
+
+def parseIngredient(API_KEY, ingredient): # ingredient is the ingredient that needs parsing
+    # 1 point cost per parsed ingredient; expensive call :(
+    directory = "jsonData"
+    filename = "RecipeByIngredients"
+    filepath = os.path.join(directory, filename)
+    
+    return
     
 
 if __name__ == "__main__": # Main with example usage
@@ -89,13 +158,15 @@ if __name__ == "__main__": # Main with example usage
     
     # Example calls for API useage
     ingredients = parameterList = ["apples", "flour", "sugar"]
-    url = getRecipeByIngredients(API_KEY, ingredients) 
+    getRecipeByIngredients(API_KEY, ingredients) 
 
-    recipeID = 324694
+    recipeID = 635315
     getRecipeInstructions(API_KEY, recipeID)
+
+    # Test parsing these JSONs
     
     '''
-    json_data = get_json_from_page(url)
+    json_data = getJsonFromGET(url)
 
     if json_data:
         # Do something with the parsed JSON data
