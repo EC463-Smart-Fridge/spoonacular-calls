@@ -112,7 +112,6 @@ def getRecipeInstructions(API_KEY, recipeID):
             for ingredient in step['ingredients']:
                 ingredientNames.add(ingredient['name'])
 
-    print(steps, ingredientNames)
     return steps, ingredientNames # returns two lists, one with the recipe steps and one with the recipe ingredients
 
 def parseIngredient(API_KEY, ingredient): # ingredient is the ingredient that needs parsing
