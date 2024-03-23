@@ -61,6 +61,8 @@ def urlPrser(request, API_KEY, parameterList):
             parameters = "&ingredients=" + parameterList[0] + "," + ",".join(["+" + ingredient for ingredient in parameterList[1:] if ingredient])
     if request == 2: # getRecipeInstructions
             subdirectory1 = "recipes/" + str(parameterList) + "/analyzedInstructions"
+    if request == 3: # getCaloriesByRecipe
+            subdirectory1 = "recipes/" + str(parameterList) + "/nutritionWidget.json"   
 
     url = url + subdirectory1 + api + parameters
     return url
@@ -73,7 +75,6 @@ def getRecipeByIngredients(API_KEY, parameterList): # parameterList should be a 
     url = url + "&number=" + str(NUMTORETURN)
     url = url + "&ranking=" + str(RANKING)
     
-
     # Create a list to store tuples of recipe ID and name
     recipesData = getJsonFromGET(url)
     recipeResults = []
@@ -114,6 +115,21 @@ def getRecipeInstructions(API_KEY, recipeID):
 
     return steps, ingredientNames # returns two lists, one with the recipe steps and one with the recipe ingredients
 
+def getCaloriesByRecipe(API_KEY, recipeID):
+    url = urlPrser(3, API_KEY, recipeID)
+
+    # Load JSON data
+    recipeData = getJsonFromGET(url)
+
+    # Extracting calories
+    calories = None
+    for nutrient in recipeData['nutrients']:
+        if nutrient['name'] == 'Calories':
+            calories = nutrient['amount']
+
+    return calories
+
+
 def parseIngredient(API_KEY, ingredient): # ingredient is the ingredient that needs parsing
     # 1 point cost per parsed ingredient; expensive call :(
     directory = "jsonData"
@@ -141,11 +157,14 @@ if __name__ == "__main__": # Main with example usage
     # print(parameterList)
     
     # Example calls for API useage
-    ingredients = parameterList = ["apples", "flour", "sugar"]
-    getRecipeByIngredients(API_KEY, ingredients) 
+    ingredients = parameterList = ["eggs", "milk", "lemon"]
+    # recipes = getRecipeByIngredients(API_KEY, ingredients) 
+    # print(recipes)
 
-    recipeID = 635315
-    getRecipeInstructions(API_KEY, recipeID)
+    recipeID = 649609
+    # instructions = getRecipeInstructions(API_KEY, recipeID)
+    calories = getCaloriesByRecipe(API_KEY, recipeID)
+    print(calories)
     
     '''
     json_data = getJsonFromGET(url)
