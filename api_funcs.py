@@ -62,13 +62,16 @@ def urlPrser(request, API_KEY, parameterList):
     if request == 2: # getRecipeInstructions
             subdirectory1 = "recipes/" + str(parameterList) + "/analyzedInstructions"
     if request == 3: # getCaloriesByRecipe
-            subdirectory1 = "recipes/" + str(parameterList) + "/nutritionWidget.json"   
+            subdirectory1 = "recipes/" + str(parameterList) + "/nutritionWidget.json"
+    if request == 4:
+            subdirectory1 = "recipes/complexSearch/"
+            parameters = "&query=" + str(parameterList)
 
     url = url + subdirectory1 + api + parameters
     return url
 
 def getRecipeByIngredients(API_KEY, parameterList): # parameterList should be a list of ingredients
-    NUMTORETURN = 10 # Sets number of ingredients to return
+    NUMTORETURN = 10 # Sets number of recipes to return
     RANKING = 2 # Set to 1 to maximize used ingredients, 2 to minimize missing ingredients
 
     url = urlPrser(1, API_KEY, parameterList)
@@ -84,15 +87,37 @@ def getRecipeByIngredients(API_KEY, parameterList): # parameterList should be a 
         # Extract recipe ID and name
         recipeID = recipe['id']
         recipeNAME = recipe['title']
+        recipeIMAGE = recipe['image']
         # Append tuple to list
-        recipeResults.append((recipeID, recipeNAME))
+        recipeResults.append((recipeID, recipeNAME, recipeIMAGE))
 
     return recipeResults # returns a tuple with the recipe ID and name
     ''' For example:
     [(673463, 'Slow Cooker Apple Pork Tenderloin'), (633547, 'Baked Cinnamon Apple Slices'), (663748, 'Traditional Apple Tart'), (715381, 'Creamy Lime Pie Square Bites'), (639637, 'Classic scones'), (635315, 'Blood Orange Margarita'), (1155776, 'Easy Homemade Chocolate Truffles'), (652952, 'Napoleon - A Creamy Puff Pastry Cake'), (664089, 'Turkish Delight'), (635778, 'Boysenberry Syrup')]
     '''
+def getRecipeByName(API_KEY, parameterList): #parameterList is name to search
+    NUMTORETURN = 10 # Sets number of recipes to return
+
+    url = urlPrser(4, API_KEY, parameterList)
+    url = url + "&number=" + str(NUMTORETURN)
     
-        
+    # Create a list to store tuples of recipe ID and name
+    recipesData = getJsonFromGET(url)
+    recipeResults = []
+
+    for recipe in recipesData['results']:
+        try:
+            # Extract recipe ID and name
+            recipeID = recipe['id']
+            recipeNAME = recipe['title']
+            recipeIMAGE = recipe['image']
+            # Append tuple to list
+            recipeResults.append((recipeID, recipeNAME, recipeIMAGE))
+        except:
+            print(f"Error: key is missing for a recipe.")
+
+    return recipeResults # returns a tuple with the recipe ID and name
+
 def getRecipeInstructions(API_KEY, recipeID):
     booleanParameters = {"stepBreakdown": False}
     booleanParameters = booleanVariablesToString(booleanParameters)
@@ -141,7 +166,7 @@ def parseIngredient(API_KEY, ingredient): # ingredient is the ingredient that ne
 
 if __name__ == "__main__": # Main with example usage
     print("Running Main.")
-    API_KEY = ""
+    API_KEY = "531880dfcffc441f8773ac8ccbd4f2da"
 
     '''
     Only the first query parameter is prefixed with a ? (question mark), all subsequent ones will be prefixed with a & (ampersand). 
@@ -156,15 +181,20 @@ if __name__ == "__main__": # Main with example usage
     # parameterList = boolean_variables_to_string(parameters)
     # print(parameterList)
     
-    # Example calls for API useage
-    ingredients = parameterList = ["eggs", "milk", "lemon"]
-    # recipes = getRecipeByIngredients(API_KEY, ingredients) 
+    # Example calls for API useage ------------------------------------------
+
+    ingredients = ["eggs", "FAIRLIFE milk" , "sargento string cheese"]
+    # recipes = getRecipeByIngredients(API_KEY, ingredients) # Get recipe by ingredients
     # print(recipes)
 
-    recipeID = 649609
-    # instructions = getRecipeInstructions(API_KEY, recipeID)
-    calories = getCaloriesByRecipe(API_KEY, recipeID)
-    print(calories)
+    recipeID = 649609 # This is returned by getRecipeByIngredients
+    instructions = getRecipeInstructions(API_KEY, recipeID) # Get recipe instructions
+    # calories = getCaloriesByRecipe(API_KEY, recipeID) # Get calories
+    # print(calories)
+
+    name = "eggplant cheese"
+    # recipes = getRecipeByName(API_KEY, name)
+    # print(recipes)
     
     '''
     json_data = getJsonFromGET(url)
