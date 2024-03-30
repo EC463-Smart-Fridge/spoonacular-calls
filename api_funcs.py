@@ -63,7 +63,7 @@ def urlPrser(request, API_KEY, parameterList):
             subdirectory1 = "recipes/" + str(parameterList) + "/analyzedInstructions"
     if request == 3: # getCaloriesByRecipe
             subdirectory1 = "recipes/" + str(parameterList) + "/nutritionWidget.json"
-    if request == 4:
+    if request == 4: # getRecipeByName
             subdirectory1 = "recipes/complexSearch/"
             parameters = "&query=" + str(parameterList)
 
@@ -166,7 +166,7 @@ def parseIngredient(API_KEY, ingredient): # ingredient is the ingredient that ne
 
 if __name__ == "__main__": # Main with example usage
     print("Running Main.")
-    API_KEY = "531880dfcffc441f8773ac8ccbd4f2da"
+    API_KEY = ""
 
     '''
     Only the first query parameter is prefixed with a ? (question mark), all subsequent ones will be prefixed with a & (ampersand). 
