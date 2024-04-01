@@ -22,7 +22,7 @@ def getGenericNames(API_KEY, text):
         data = response.json()
 
         for food in data["annotations"]:
-            foodsFound.append((food["annotation"], food["tag"], food["image"]))
+            foodsFound.append((food["annotation"], food["tag"]))
     else:
         # Handle errors
         print("Error:", response.status_code, response.text)
@@ -33,7 +33,7 @@ def getGenericNames(API_KEY, text):
 
 # Example use of function
 API_KEY = "531880dfcffc441f8773ac8ccbd4f2da"
-text = "I like to eat delicious tacos. The only thing better is a cheeseburger with cheddar. But then again, pizza with pepperoni, mushrooms, and tomatoes is so good too!"
+text = "PALDO, PORORO MILK, MILK, MILK. DIET COKE WITH LIME FLAVOR, LIME. MAZOLA, CHICKEN BOUILLON, CHICKEN, CHICKEN. BALSAMIC CHICKEN, CHICKEN. EGG NOODLES."
 
 results = getGenericNames(API_KEY, text)
 print(results)
