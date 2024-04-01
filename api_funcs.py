@@ -159,7 +159,6 @@ def getCaloriesByRecipe(API_KEY, recipeID):
 
 def getIngredientAmounts(API_KEY, recipeID):
     url = urlPrser(5, API_KEY, recipeID)
-    print(url)
 
     # Load JSON data
     recipeData = getJsonFromGET(url)
