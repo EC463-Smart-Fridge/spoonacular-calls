@@ -66,6 +66,9 @@ def urlPrser(request, API_KEY, parameterList):
     if request == 4: # getRecipeByName
             subdirectory1 = "recipes/complexSearch/"
             parameters = "&query=" + str(parameterList)
+    if request == 5: # getIngredientAmounts
+            subdirectory1 = "recipes/" + str(parameterList) + "/information"
+            parameters = "&includeNutrition=false"
 
     url = url + subdirectory1 + api + parameters
     return url
@@ -154,6 +157,20 @@ def getCaloriesByRecipe(API_KEY, recipeID):
 
     return calories
 
+def getIngredientAmounts(API_KEY, recipeID):
+    url = urlPrser(5, API_KEY, recipeID)
+    print(url)
+
+    # Load JSON data
+    recipeData = getJsonFromGET(url)
+
+    # Extracting calories
+    ingredientInfo = []
+    for ingredient in recipeData['extendedIngredients']:
+        ingredientInfo.append((ingredient['name'], ingredient['amount'], ingredient['unit']))
+
+    return ingredientInfo
+
 
 def parseIngredient(API_KEY, ingredient): # ingredient is the ingredient that needs parsing
     # 1 point cost per parsed ingredient; expensive call :(
@@ -195,6 +212,10 @@ if __name__ == "__main__": # Main with example usage
     name = "eggplant cheese"
     # recipes = getRecipeByName(API_KEY, name)
     # print(recipes)
+
+    ingredientInfo = getIngredientAmounts(API_KEY, recipeID)
+    print(ingredientInfo)
+    
     
     '''
     json_data = getJsonFromGET(url)
