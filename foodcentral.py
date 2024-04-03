@@ -1,12 +1,9 @@
 import requests
 import json
-import os
-
-# Access the secrets / api keys stored in github secrets
 
 def findProductUsingUPC(searchTerm, api_key, lookupType):
     
-    if lookupType == "scan": 
+    if lookupType == "smartScan": 
         searchType = "Foundation,Survey,SRLegacy"
     elif lookupType == "upc":
         searchType = "Branded"
@@ -20,54 +17,60 @@ def findProductUsingUPC(searchTerm, api_key, lookupType):
     try:
         # Send an HTTP GET request to the API endpoint
         response = requests.get(url)
+        filename = "output.json"
+
 
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
             # Parse the JSON response
             data = response.json()
+            name = ""
+            category = ""
+            calories = 0
+            
+            try:
+                name = data["foods"][0]["description"].lstrip().capitalize()
+                category = data["foods"][0]["foodCategory"].lstrip().capitalize()
 
-            # Save the JSON data to a file
-            with open("output.json", "w") as output_file:
-                output_file.write(json.dumps(data, indent=4))
+                #Find block with kcal info
+                for index, block in enumerate(data["foods"][0]["foodNutrients"]):
+                    if block["nutrientId"] == 1008:
+                        calories = block["value"]
+                        break
 
-            print("JSON data saved to 'output.json'")
+                return name, category, calories
+            
+            except:
+                try:
+                    url = f"https://api.nal.usda.gov/fdc/v1/foods/search?api_key={api_key}&query={searchTerm}" # widen search criteria
+                    response = requests.get(url)
+                    data = response.json()
+
+                    name = data["foods"][0]["description"].lstrip().capitalize()
+                    category = data["foods"][0]["foodCategory"].lstrip().capitalize()
+
+                    #Find block with kcal info
+                    for index, block in enumerate(data["foods"][0]["foodNutrients"]):
+                        if block["nutrientId"] == 1008:
+                            calories = block["value"]
+                            break
+
+                    return name, category, calories
+                except:
+                    return name, category, calories
         else:
             print(f"Error: {response.status_code} - {response.text}")
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
-def getInfoFromJSON(filename):
-    print("Getting info...")
-
-    # Specify the path to the JSON file
-    jsonFilePath = filename
-
-    # Open the JSON file
-    with open(jsonFilePath, 'r') as file:
-        # Load the JSON data
-        data = json.load(file)
-    
-    name = data["foods"][0]["description"].lstrip().capitalize()
-    category = data["foods"][0]["foodCategory"].lstrip().capitalize()
-
-    #Find block with kcal info
-    calories = 0
-    for index, block in enumerate(data["foods"][0]["foodNutrients"]):
-        if block["nutrientId"] == 1008:
-            calories = block["value"]
-            break
-
-    return name, category, calories
-
 def main():
     # Replace these placeholders with your actual UPC and API key
-    searchTerm = "orange"
+    searchTerm = "apple"
     api_key = "wn0aUcaBRdgzaIAXL9lzh69bEkskIAkPfolNO8RW"
-    lookupType = "scan"
+    lookupType = "smartScan" # "smartScan" or "upc"
 
-    findProductUsingUPC(searchTerm, api_key, lookupType)
-    name, category, cal = getInfoFromJSON("output.json")
+    name, category, cal = findProductUsingUPC(searchTerm, api_key, lookupType)
 
     print(name, category, cal)
 
